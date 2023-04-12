@@ -8,9 +8,6 @@ import java.math.BigDecimal;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Temporal;
 import javax.persistence.*;
-import pt.amane.condominium_fee.model.Titulo;
-import pt.amane.condominium_fee.model.StatusTitulo;
-
 
 
 @Entity

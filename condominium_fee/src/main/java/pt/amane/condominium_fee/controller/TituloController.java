@@ -37,14 +37,14 @@ public class TituloController {
 
     @RequestMapping
     public ModelAndView pesquisar() {
-        java.util.List<Titulo> titulos = repository.findAll();
-        ModelAndView modelAndView = new org.springframework.web.servlet.ModelAndView("PesquisaTitulos");
-        modelAndView.addObject("titulos", titulos);
+        java.util.List<Titulo> todosTitulos = repository.findAll();
+        ModelAndView modelAndView = new org.springframework.web.servlet.ModelAndView("pesquisaTitulos");
+        modelAndView.addObject("titulos", todosTitulos);
         return modelAndView;
     }
 
     @ModelAttribute("todosStatusTitulo")
-    public java.util.List<StatusTitulo> todosStatusTitulo() {
+    public java.util.List<pt.amane.condominium_fee.model.StatusTitulo> todosStatusTitulo() {
         return Arrays.asList(StatusTitulo.values());
     }
 
