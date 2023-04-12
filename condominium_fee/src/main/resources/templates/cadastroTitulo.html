@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layoutPadrao"> <!--chame o ficheiro layoutPadrao que tem cabeçalho e a configuração-->
 <head>
-    <meta charset="UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"></link>
-    <link rel="stylesheet" type="text/css" href="/css/style.css"></link>
     <title>Cadastro Titulo</title>
 </head>
-<body>
-    <script src="/js/bootstrap.min.js"></script>
-    <nav class="navbar navbar-inverse navbar-static-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">
-                    <img alt="AlgaWorks" src="/images/logo-algaworks.png"/>
-                </a>
-            </div>
-        </div>
-    </nav>
+
+<section layout:fragment="conteudo">
     <form class="form-horizontal" method="POST" action="/titulos">
         <div class="alert alert-success" th:if="${!#strings.isEmpty(#messages)}">
             <span th:text="${mensagem}">Título salvo com sucesso!</span>
@@ -26,7 +16,10 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h1 class="panel-title">Novo título</h1>
+                <div class="clearfix">
+                    <h1 class="panel-title .aw-titulo-panel">Novo títulos</h1>
+                    <link class="btn btn-link aw-link-panel" href="/titulos">Voltar para Pesquisa</link>
+                </div>
             </div>
 
             <div class="panel-body">
@@ -64,6 +57,5 @@
             </div>
         </div>
     </form>
-
-</body>
+</section>
 </html>

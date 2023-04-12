@@ -36,8 +36,11 @@ public class TituloController {
     }
 
     @RequestMapping
-    public String pesquisa() {
-        return "PesquisaTitulos";
+    public ModelAndView pesquisar() {
+        java.util.List<Titulo> titulos = repository.findAll();
+        ModelAndView modelAndView = new org.springframework.web.servlet.ModelAndView("PesquisaTitulos");
+        modelAndView.addObject("titulos", titulos);
+        return modelAndView;
     }
 
     @ModelAttribute("todosStatusTitulo")

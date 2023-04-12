@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layoutPadrao">
 <head>
-    <meta charset="UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"></link>
-    <link rel="stylesheet" type="text/css" href="/css/style.css"></link>
     <title>Pesquisa de Titulos</title>
 </head>
-<body>
-    <script src="/js/jquery-2.1.4.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <nav class="navbar navbar-inverse navbar-static-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">
-                    <img alt="AlgaWorks" src="/images/logo-algaworks.png"/>
-                </a>
-            </div>
-        </div>
-    </nav>
+
+<section layout:fragment="conteudo">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h1 class="panel-title">Pesquisa de títulos</h1>
+            <div class="clearfix">
+                <h1 class="panel-title .aw-titulo-panel">Pesquisa de títulos</h1>
+                <link class="btn btn-link aw-link-panel" href="/titulos/novo">Novo Título</link>
+            </div>
         </div>
 
         <div class="panel-body">
@@ -44,4 +36,6 @@
                 </tbody>
             </table>
         </div>
-</body>
+    </div>
+</section>
+</html>
