@@ -10,6 +10,9 @@ import org.springframework.web.servlet.ModelAndView;
 import pt.amane.condominium_fee.model.StatusTitulo;
 import java.util.Arrays;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/titulos")
@@ -21,6 +24,7 @@ public class TituloController {
     @RequestMapping(value = "/novo")
     public ModelAndView novo() {
         ModelAndView modelAndView = new ModelAndView("cadastroTitulo");
+        modelAndView.addObject(new Titulo());
         // StatusTitulo.values() ->retorna um array de enum
         //todosStatusTitulo é um objecto chave que recebe o valor de array de enum.
         modelAndView.addObject("todosStatusTitulo", StatusTitulo.values());
@@ -28,11 +32,15 @@ public class TituloController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView salvar(Titulo titulo) {
+    public String salvar(@Validated Titulo titulo, Errors errors, RedirectAttributes attributes) {
+        //ModelAndView modelAndView = new ModelAndView("cadastroTitulo");
+        if (errors.hasErrors()) {
+            return "cadastroTitulo";
+        }
         repository.save(titulo);
-        ModelAndView modelAndView = new ModelAndView("cadastroTitulo");
-        modelAndView.addObject("mensagem", "Titulo salvo com sucesso!");
-        return modelAndView;
+//        ModelAndView mv = new ModelAndView("redirect:/titulos/novo");
+        attributes.addFlashAttribute("mensagem", "Titulo salvo com sucesso!");
+        return "redirect:/titulos/novo";
     }
 
     @RequestMapping
