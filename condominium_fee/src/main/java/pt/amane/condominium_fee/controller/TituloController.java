@@ -1,58 +1,87 @@
 package pt.amane.condominium_fee.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import pt.amane.condominium_fee.model.Titulo;
 import org.springframework.beans.factory.annotation.Autowired;
-import pt.amane.condominium_fee.repositories.TituloRepository;
-import org.springframework.web.servlet.ModelAndView;
-import pt.amane.condominium_fee.model.StatusTitulo;
-import java.util.Arrays;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.validation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pt.amane.condominium_fee.model.StatusTitulo;
+import pt.amane.condominium_fee.model.Titulo;
+import pt.amane.condominium_fee.repositories.filter.TituloFilter;
+import pt.amane.condominium_fee.services.CadastroTituloService;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
-@RequestMapping(value = "/titulos")
+@RequestMapping("/titulos")
 public class TituloController {
 
-    @Autowired
-    private TituloRepository repository;
+    private static final String CADASTRO_VIEW = "CadastroTitulo";
 
-    @RequestMapping(value = "/novo")
+    @Autowired
+    private CadastroTituloService cadastroTituloService;
+
+    @RequestMapping("/novo")
     public ModelAndView novo() {
-        ModelAndView modelAndView = new ModelAndView("cadastroTitulo");
-        modelAndView.addObject(new Titulo());
-        // StatusTitulo.values() ->retorna um array de enum
-        //todosStatusTitulo é um objecto chave que recebe o valor de array de enum.
-        modelAndView.addObject("todosStatusTitulo", StatusTitulo.values());
-        return modelAndView;
+        ModelAndView mv = new ModelAndView(CADASTRO_VIEW);
+        mv.addObject(new Titulo());
+        return mv;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String salvar(@Validated Titulo titulo, Errors errors, RedirectAttributes attributes) {
-        //ModelAndView modelAndView = new ModelAndView("cadastroTitulo");
         if (errors.hasErrors()) {
-            return "cadastroTitulo";
+            return CADASTRO_VIEW;
         }
-        repository.save(titulo);
-//        ModelAndView mv = new ModelAndView("redirect:/titulos/novo");
-        attributes.addFlashAttribute("mensagem", "Titulo salvo com sucesso!");
-        return "redirect:/titulos/novo";
+
+        try {
+            cadastroTituloService.salvar(titulo);
+            attributes.addFlashAttribute("mensagem", "Título salvo com sucesso!");
+            return "redirect:/titulos/novo";
+        } catch (IllegalArgumentException e) {
+            errors.rejectValue("dataVencimento", null, e.getMessage());
+            return CADASTRO_VIEW;
+        }
     }
 
     @RequestMapping
-    public ModelAndView pesquisar() {
-        java.util.List<Titulo> todosTitulos = repository.findAll();
-        ModelAndView modelAndView = new org.springframework.web.servlet.ModelAndView("pesquisaTitulos");
-        modelAndView.addObject("titulos", todosTitulos);
-        return modelAndView;
+    public ModelAndView pesquisar(@ModelAttribute("filtro") TituloFilter filtro) {
+        List<Titulo> todosTitulos = cadastroTituloService.filtrar(filtro);
+
+        ModelAndView mv = new ModelAndView("PesquisaTitulos");
+        mv.addObject("titulos", todosTitulos);
+        return mv;
+    }
+
+    @RequestMapping("{codigo}")
+    public ModelAndView edicao(@PathVariable("codigo") Titulo titulo) {
+        ModelAndView mv = new ModelAndView(CADASTRO_VIEW);
+        mv.addObject(titulo);
+        return mv;
+    }
+
+    @RequestMapping(value="{codigo}", method = RequestMethod.DELETE)
+    public String excluir(@PathVariable Long codigo, RedirectAttributes attributes) {
+        cadastroTituloService.excluir(codigo);
+
+        attributes.addFlashAttribute("mensagem", "Título excluído com sucesso!");
+        return "redirect:/titulos";
+    }
+
+    @RequestMapping(value = "/{codigo}/receber", method = RequestMethod.PUT)
+    public @ResponseBody String receber(@PathVariable Long codigo) {
+        return cadastroTituloService.receber(codigo);
     }
 
     @ModelAttribute("todosStatusTitulo")
-    public java.util.List<pt.amane.condominium_fee.model.StatusTitulo> todosStatusTitulo() {
+    public List<StatusTitulo> todosStatusTitulo() {
         return Arrays.asList(StatusTitulo.values());
     }
 
